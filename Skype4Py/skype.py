@@ -74,9 +74,11 @@ class APINotifier(SkypeAPINotifier):
                         skype._CallEventHandler('CallVideoReceiveStatusChanged', o, str(value))
                 elif object_type == 'CHAT':
                     o = Chat(skype, object_id)
-                    if prop_name == 'MEMBERS':
+                    if prop_name == 'ACTIVITY_TIMESTAMP':
+                        skype._CallEventHandler('ChatActivity', o, value)
+                    elif prop_name == 'MEMBERS':
                         skype._CallEventHandler('ChatMembersChanged', o, UserCollection(skype, split(value)))
-                    if prop_name in ('OPENED', 'CLOSED'):
+                    elif prop_name in ('OPENED', 'CLOSED'):
                         skype._CallEventHandler('ChatWindowState', o, (prop_name == 'OPENED'))
                 elif object_type == 'CHATMEMBER':
                     o = ChatMember(skype, object_id)
@@ -1458,6 +1460,10 @@ class SkypeEvents(object):
             Call object.
           Status : `enums`.cvs*
             New video status of the call.
+        """
+
+    def ChatActivity(self, Chat, Timestamp):
+        """This event occurs when a chat has some activity.
         """
 
     def ChatMemberRoleChanged(self, Member, Role):
